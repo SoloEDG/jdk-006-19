@@ -1660,3 +1660,293 @@ footer i {
   display: block;
   margin-bottom: 10px;
 }
+
+/* ---- 录音版本补丁 ---- */
+.scene-meta-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.version-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  color: #b6a77f;
+  border: 1px solid #5c5846;
+  border-radius: 3px;
+  padding: 6px 8px;
+}
+.version-toggle.original {
+  color: #9fc1b0;
+  border-color: #43604f;
+  background: #1b302a;
+}
+.pending-badge,
+.migrated-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 7px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 7px;
+  vertical-align: middle;
+}
+.pending-badge {
+  color: #e6b58d;
+  border: 1px solid #6b5240;
+  background: #2b2119;
+}
+.migrated-badge {
+  color: #93b8a6;
+  border: 1px solid #3c5a4c;
+  background: #172a23;
+}
+.pending-panel {
+  border: 1px solid #5a4636;
+  background: #211a15;
+  border-radius: 4px;
+  padding: 9px;
+  margin-top: 9px;
+  font-size: 8px;
+  line-height: 1.8;
+  color: #c0a086;
+}
+.pending-actions,
+.window-editor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.pending-actions button,
+.window-editor button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 8px;
+  color: #ddbe91;
+  border: 1px solid #574a38;
+  border-radius: 3px;
+  padding: 5px 7px;
+}
+.window-editor label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 8px;
+  color: #a99077;
+}
+.window-editor input {
+  width: 56px;
+  background: #121922;
+  border: 1px solid #3d4a55;
+  border-radius: 3px;
+  padding: 4px 5px;
+  font-size: 9px;
+}
+.version-dialog {
+  background: #121f2a;
+  border: 1px solid #3a4e5a;
+  border-radius: 10px;
+  box-shadow: 0 20px 100px #0008;
+  width: min(780px, 94vw);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 30px;
+  position: relative;
+  scrollbar-width: thin;
+}
+.patch-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 18px 0;
+}
+.patch-inputs > div {
+  border: 1px dashed #3a4e5a;
+  border-radius: 5px;
+  padding: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+.patch-inputs label {
+  font-size: 10px;
+  color: #b4c4cc;
+}
+.patch-inputs small {
+  font-size: 8px;
+  color: #6e8a98;
+  line-height: 1.6;
+  word-break: break-all;
+}
+.secondary-button,
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #3d5360;
+  border-radius: 4px;
+  padding: 8px 11px;
+  font-size: 10px;
+  color: #c2cbd0;
+  background: #203440;
+}
+.primary-button {
+  color: #dcc28d;
+  border-color: #71674d;
+  background: #343b35;
+}
+.patch-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+.patch-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 16px 0;
+}
+.patch-summary > span {
+  font-size: 9px;
+  color: #8fa7b3;
+  border: 1px solid #314753;
+  background: #152631;
+  border-radius: 4px;
+  padding: 8px;
+  line-height: 1.6;
+}
+.patch-summary b {
+  color: #dcc28d;
+  font: 14px monospace;
+  margin-right: 4px;
+}
+.patch-summary .warn b {
+  color: #e6b58d;
+}
+.patch-scene {
+  border: 1px solid #334c5a;
+  border-radius: 5px;
+  margin: 10px 0;
+  background: #152632;
+}
+.patch-scene > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 13px;
+  cursor: pointer;
+}
+.patch-scene > header strong {
+  font-size: 11px;
+  color: #c5d2d7;
+}
+.patch-scene > header small {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 8px;
+  color: #7896a5;
+  margin-top: 4px;
+}
+.patch-scene > header .ok {
+  font-size: 8px;
+  color: #96b8a7;
+}
+.patch-scene > header .warn {
+  font-size: 8px;
+  color: #e0b08a;
+}
+.patch-scene-body {
+  border-top: 1px solid #2b414e;
+  padding: 10px 13px 14px;
+}
+.patch-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 9px;
+  color: #8ea7b4;
+  padding: 4px 0;
+}
+.patch-row > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #a9bcc6;
+}
+.patch-row .warn {
+  color: #e0b08a;
+}
+.patch-clues {
+  border-top: 1px dashed #354b58;
+  margin-top: 6px;
+  padding-top: 6px;
+}
+.patch-notes {
+  border-top: 1px dashed #354b58;
+  margin-top: 8px;
+  padding-top: 8px;
+}
+.patch-note {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 9px;
+  padding: 6px 8px;
+  border-radius: 3px;
+  background: #172b36;
+  margin: 5px 0;
+  color: #9db2be;
+}
+.patch-note.pending {
+  background: #241d17;
+  color: #d5ab89;
+}
+.patch-note strong {
+  font-size: 9px;
+  font-weight: 500;
+}
+.patch-note small {
+  display: block;
+  font: 8px monospace;
+  color: #6d8996;
+  margin-top: 3px;
+}
+@media (max-width: 720px) {
+  .patch-inputs,
+  .patch-summary {
+    grid-template-columns: 1fr;
+  }
+  .version-dialog {
+    padding: 20px;
+  }
+  .scene-meta-actions {
+    gap: 7px;
+  }
+}
+.evidence-dots > span.stale {
+  border-color: #7a5a3c;
+  background: #2b2119;
+  color: #e6b58d;
+}
+.sample-link {
+  font-size: 8px;
+  color: #8fb0be;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.patch-footnote {
+  font-size: 9px;
+  line-height: 1.9;
+  color: #7b95a2;
+  border-left: 2px solid #4a5f4d;
+  padding-left: 10px;
+  margin: 14px 0 0;
+}

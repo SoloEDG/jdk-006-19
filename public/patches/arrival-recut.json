@@ -1,0 +1,102 @@
+{
+  "id": "arrival-recut-2026-01",
+  "name": "来电录音修订（示例）",
+  "createdAt": 1763000000000,
+  "recordings": [
+    {
+      "id": "arrival-v2",
+      "sceneId": "arrival",
+      "title": "迟到的来电",
+      "version": "修订录音",
+      "description": "纠正钟声台词，并删去一句冗余对白。",
+      "audio": "/audio/arrival-v2.wav",
+      "duration": 26.332,
+      "replaces": "arrival-normal",
+      "segments": [
+        {
+          "from": {
+            "start": 0,
+            "end": 10
+          },
+          "to": {
+            "start": 0,
+            "end": 10
+          }
+        },
+        {
+          "from": {
+            "start": 10,
+            "end": 13
+          }
+        },
+        {
+          "from": {
+            "start": 13,
+            "end": 14.39
+          },
+          "to": {
+            "start": 10,
+            "end": 11.39
+          }
+        },
+        {
+          "from": {
+            "start": 14.39,
+            "end": 19.459
+          },
+          "to": {
+            "start": 11.39,
+            "end": 16.459
+          },
+          "changed": true
+        },
+        {
+          "from": {
+            "start": 19.459,
+            "end": 29.332
+          },
+          "to": {
+            "start": 16.459,
+            "end": 26.332
+          }
+        }
+      ],
+      "cues": [
+        {
+          "id": "line-1",
+          "speaker": "旁白",
+          "text": "一九九八年，十一月七日。雾港的最后一班渡轮，已经停航。",
+          "start": 0.0,
+          "end": 6.123
+        },
+        {
+          "id": "line-2",
+          "speaker": "林岚",
+          "text": "这里是雾港电台。二十三点十七分，我们收到了一通，没有来电号码的电话。",
+          "start": 6.623,
+          "end": 10.0
+        },
+        {
+          "id": "line-3",
+          "speaker": "陌生人",
+          "text": "不要相信灯塔上的光。请听清楚，钟声响了三次。",
+          "start": 11.39,
+          "end": 16.459,
+          "sound": {
+            "clueId": "bell",
+            "start": 12.19,
+            "end": 14.19,
+            "description": "三声金属钟响"
+          }
+        },
+        {
+          "id": "line-4",
+          "speaker": "林岚",
+          "text": "线路断了。可远处的灯塔，二十年前就已经停止使用。我们先去码头，还是找守塔人谈谈？",
+          "start": 16.459,
+          "end": 25.832
+        }
+      ]
+    }
+  ]
+}

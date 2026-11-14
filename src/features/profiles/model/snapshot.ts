@@ -13,9 +13,21 @@ export function createSnapshot(
   evidence: EvidenceState,
   heard: HeardHistory,
   resume: ResumePoint,
+  appliedPatches?: CaseSnapshot["appliedPatches"],
+  originalScenes?: CaseSnapshot["originalScenes"],
 ): CaseSnapshot {
   return validateSnapshot(
-    { version: 1, caseId: content.id, story, evidence, heard, resume },
+    {
+      version: 1,
+      caseId: content.id,
+      story,
+      evidence,
+      heard,
+      resume,
+      ...(appliedPatches?.length ? { appliedPatches } : {}),
+      ...(originalScenes?.length ? { originalScenes } : {}),
+    },
     content,
+    appliedPatches,
   );
 }

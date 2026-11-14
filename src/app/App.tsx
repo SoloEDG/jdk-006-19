@@ -12,6 +12,9 @@ import {
   Check,
   ChevronRight,
   Info,
+  GitBranch,
+  History,
+  AlertTriangle,
 } from "lucide-react";
 import {
   CASE_CONTENT,
@@ -23,13 +26,15 @@ import {
 import { Player } from "../features/listening";
 import { TranscriptPanel } from "../features/transcript";
 import { EvidencePanel, canCollectSound } from "../features/evidence";
-import { ProfilesDialog } from "../features/profiles";
+import { ProfilesDialog, createSnapshot } from "../features/profiles";
+import { VersionPatchDialog } from "../features/versions";
 import { currentCue } from "../features/transcript";
 import { useCase } from "./useCase";
 export function App() {
   const c = useCase(),
     [tab, setTab] = useState<"transcript" | "evidence">("transcript"),
     [profiles, setProfiles] = useState(false),
+    [patchDialog, setPatchDialog] = useState(false),
     [about, setAbout] = useState(false);
   const scene = CASE_CONTENT.scenes.find((s) => s.id === c.story.sceneId)!,
     cue = currentCue(c.episode, c.audio.view.position),
@@ -38,6 +43,25 @@ export function App() {
     c.audio.pause();
     setProfiles(true);
   };
+  const showPatch = () => {
+    c.audio.pause();
+    setPatchDialog(true);
+  };
+  // 预览以「已经启用的补丁」为基础再叠加新补丁。
+  const patchSnapshot = () =>
+    createSnapshot(
+      CASE_CONTENT,
+      c.story,
+      c.evidence,
+      c.heard,
+      {
+        sceneId: c.story.sceneId,
+        position: c.audio.view.position,
+        rate: c.audio.view.rate,
+        episodeId: c.episode.id,
+      },
+      c.applied,
+    );
   return (
     <div className="app">
       <header className="topbar">
@@ -149,16 +173,35 @@ export function App() {
                   <strong>{c.episode.title}</strong>
                   <small>{c.episode.version}</small>
                 </div>
-                <button
-                  onClick={() => {
-                    c.audio.pause();
-                    setTab("evidence");
-                    c.note();
-                  }}
-                >
-                  <NotebookPen size={14} />
-                  记一笔
-                </button>
+                <div className="scene-meta-actions">
+                  {c.versions && (
+                    <button
+                      className={`version-toggle ${c.episode.id === c.versions.base.id ? "original" : ""}`}
+                      aria-label="切换原版与新版录音"
+                      onClick={() =>
+                        c.setSceneVersion(
+                          scene.id,
+                          c.episode.id === c.versions!.target.id,
+                        )
+                      }
+                    >
+                      <History size={13} />
+                      {c.episode.id === c.versions.base.id
+                        ? "切回新版录音"
+                        : "回听原版录音"}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      c.audio.pause();
+                      setTab("evidence");
+                      c.note();
+                    }}
+                  >
+                    <NotebookPen size={14} />
+                    记一笔
+                  </button>
+                </div>
               </div>
               <Player
                 episode={c.episode}
@@ -195,6 +238,10 @@ export function App() {
                   ? `${activeSlot.name}${c.dirty ? " · 有未保存更改" : " · 已保存"}`
                   : "未命名的调查路线"}
               </span>
+              <button onClick={showPatch}>
+                <GitBranch size={12} />
+                版本补丁
+              </button>
               <button onClick={showProfiles}>
                 <Save size={13} />
                 保存进度
@@ -247,6 +294,8 @@ export function App() {
                 onDelete={c.remove}
                 onPin={c.pin}
                 onNew={c.note}
+                onResolve={c.resolvePending}
+                captureWindow={() => c.audio.captureRange(c.story.sceneId, 5)}
               />
             )}
             <div className="clue-tracker">
@@ -261,12 +310,16 @@ export function App() {
                 {CASE_CONTENT.clues.map((clue) => (
                   <span
                     key={clue.id}
-                    title={clue.title}
-                    className={
-                      c.evidence.clues.includes(clue.id) ? "found" : ""
+                    title={
+                      c.missingClues.has(clue.id)
+                        ? `${clue.title} · 声窗待重新核对`
+                        : clue.title
                     }
+                    className={`${c.evidence.clues.includes(clue.id) ? "found" : ""} ${c.missingClues.has(clue.id) ? "stale" : ""}`}
                   >
-                    {c.evidence.clues.includes(clue.id) ? (
+                    {c.missingClues.has(clue.id) ? (
+                      <AlertTriangle size={11} />
+                    ) : c.evidence.clues.includes(clue.id) ? (
                       <Check size={12} />
                     ) : (
                       <Headphones size={11} />
@@ -274,7 +327,11 @@ export function App() {
                   </span>
                 ))}
               </div>
-              <p>留意对白之间，那些不经意的声音。</p>
+              <p>
+                {c.missingClues.size
+                  ? "版本补丁后，部分线索声窗需重新核对。"
+                  : "留意对白之间，那些不经意的声音。"}
+              </p>
             </div>
           </aside>
         </div>
@@ -306,6 +363,24 @@ export function App() {
           onClose={() => setProfiles(false)}
         />
       )}
+      {patchDialog && (
+        <VersionPatchDialog
+          content={c.content}
+          snapshot={patchSnapshot()}
+          clues={c.evidence.clues}
+          resume={{
+            sceneId: c.story.sceneId,
+            position: c.audio.view.position,
+            rate: c.audio.view.rate,
+          }}
+          appliedIds={c.applied.map((entry) => entry.patch.id)}
+          onConfirm={(result) => {
+            c.enablePatch(result);
+            setPatchDialog(false);
+          }}
+          onClose={() => setPatchDialog(false)}
+        />
+      )}
       {about && (
         <div className="modal-backdrop">
           <section className="guide-dialog">
@@ -325,6 +400,10 @@ export function App() {
             </p>
             <p>
               从「调查存档」命名保存不同进度，也可导出或导入本地文件。新调查保留已有存档；切换存档会替换当前未保存进度，请先保存。
+            </p>
+            <p>
+              录音修订后，可在「版本补丁」导入新录音、字幕与新旧片段对应表。系统会先预览笔记、已听范围与继续播放位置能否准确迁移；
+              一键对应不上的笔记保留旧源并标记待处理，原版录音始终可以切回回听。
             </p>
             <button className="primary" onClick={() => setAbout(false)}>
               开始倾听 <ArrowUpRight size={15} />

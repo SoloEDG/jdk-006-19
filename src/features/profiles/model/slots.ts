@@ -3,6 +3,7 @@ import type {
   CaseSnapshot,
   SaveSlot,
 } from "../../../shared/types";
+import { validateAppliedPatches } from "../../versions/lib/patchCodec";
 import { validateSnapshot } from "../lib/codec";
 export const MAX_SLOTS = 8;
 export function normalizeSlotName(name: string): string {
@@ -37,11 +38,19 @@ export function parseStoredSlot(
     s.updatedAt < 0
   )
     throw new Error("存档卡片信息无效");
+  const snapshot = s.snapshot as CaseSnapshot | undefined;
+  if (!snapshot || typeof snapshot !== "object")
+    throw new Error("存档卡片信息无效");
+  // 先校验补丁，再用补丁音源校验秒数：旧档与新档走同一条路径。
+  const appliedPatches = validateAppliedPatches(
+    snapshot.appliedPatches,
+    content,
+  );
   return {
     id: s.id,
     name: normalizeSlotName(s.name),
     updatedAt: s.updatedAt,
-    snapshot: validateSnapshot(s.snapshot, content),
+    snapshot: validateSnapshot(snapshot, content, appliedPatches),
   };
 }
 export function parseImported(text: string, content: CaseContent): SaveSlot {
@@ -52,5 +61,7 @@ export function parseImported(text: string, content: CaseContent): SaveSlot {
     throw new Error("导入失败：文件不是有效 JSON");
   }
   const slot = parseStoredSlot(input, content);
-  return createSlot(`${slot.name.slice(0, 20)} · 副本`, slot.snapshot);
+  const copy = createSlot(`${slot.name.slice(0, 20)} · 副本`, slot.snapshot);
+  // 补丁编号保持原样，笔记里的迁移依据才能继续指向同一份补丁。
+  return { ...copy, snapshot: structuredClone(slot.snapshot) };
 }

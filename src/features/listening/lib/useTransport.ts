@@ -105,7 +105,8 @@ export function useTransport(
       audio.removeAttribute("src");
       audio.load();
     };
-  }, [episode.id]);
+    // 补丁音频在本机恢复后地址会变化，同一编号也要重新加载。
+  }, [episode.id, episode.audio]);
   const pause = () => loaded.current?.element.pause();
   const seek = (position: number) => {
     const a = loaded.current?.element;
@@ -122,13 +123,16 @@ export function useTransport(
   };
   const captureRange: CapturePort["captureRange"] = (_sceneId, width) => {
     const actual = loaded.current;
-    return actual
-      ? captureWindow(
-          actual.episode.sceneId,
-          actual.element.currentTime,
-          actual.element.duration,
-          width,
-        )
+    if (!actual) return null;
+    const anchor = captureWindow(
+      actual.episode.sceneId,
+      actual.element.currentTime,
+      actual.element.duration,
+      width,
+    );
+    // 记录这段秒数来自哪条录音，补丁迁移时才能找对基线。
+    return anchor
+      ? { ...anchor, sourceEpisodeId: actual.episode.id }
       : null;
   };
   return {
